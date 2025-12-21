@@ -5,8 +5,8 @@ published: 2025-12-14
 date: 2025-12-14
 pubDate: 2025-12-14
 draft: false
-tags: [writeup]
-category: web
+tags: [web,PHP]
+category: writeup
 pinned: false
 author: mio
 ---
