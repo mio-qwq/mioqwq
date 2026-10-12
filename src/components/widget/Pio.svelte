@@ -2,7 +2,6 @@
 import { onDestroy, onMount } from "svelte";
 import { pioConfig } from "@/config";
 
-// 将配置转换为 Pio 插件需要的格式
 const pioOptions = {
 	mode: pioConfig.mode,
 	hidden: pioConfig.hiddenOnMobile,
@@ -10,105 +9,96 @@ const pioOptions = {
 	model: pioConfig.models || ["/pio/models/pio/model.json"],
 };
 
-// 全局Pio实例引用
-let pioInstance = null;
 let pioInitialized = false;
 let pioContainer;
 let pioCanvas;
+let mobileHidden = false;
+let disposed = false;
+let assetsPromise;
+let mobileQuery;
 
-// 样式已通过 Layout.astro 静态引入，无需动态加载
-
-// 等待 DOM 加载完成后再初始化 Pio
-function initPio() {
-	if (typeof window !== "undefined" && typeof Paul_Pio !== "undefined") {
-		try {
-			// 确保DOM元素存在
-			if (pioContainer && pioCanvas && !pioInitialized) {
-				pioInstance = new Paul_Pio(pioOptions);
-				pioInitialized = true;
-				console.log("Pio initialized successfully (Svelte)");
-			} else if (!pioContainer || !pioCanvas) {
-				console.warn("Pio DOM elements not found, retrying...");
-				setTimeout(initPio, 100);
-			}
-		} catch (e) {
-			console.error("Pio initialization error:", e);
+// 等待脚本真正加载完成，不能仅凭 script 标签存在就开始初始化。
+function loadScript(src, id, isReady) {
+	if (isReady()) return Promise.resolve();
+	return new Promise((resolve, reject) => {
+		let script = document.getElementById(id);
+		const existing = Boolean(script);
+		if (!script) {
+			script = document.createElement("script");
+			script.id = id;
+			script.src = src;
 		}
-	} else {
-		// 如果 Paul_Pio 还未定义，稍后再试
-		setTimeout(initPio, 100);
+		const cleanup = () => {
+			script.removeEventListener("load", loaded);
+			script.removeEventListener("error", failed);
+		};
+		const loaded = () => {
+			cleanup();
+			if (isReady()) resolve();
+			else {
+				script.remove();
+				reject(new Error(`Pio script did not initialize: ${src}`));
+			}
+		};
+		const failed = () => {
+			cleanup();
+			script.remove();
+			reject(new Error(`Failed to load Pio script: ${src}`));
+		};
+		script.addEventListener("load", loaded, { once: true });
+		script.addEventListener("error", failed, { once: true });
+		if (!existing) document.head.appendChild(script);
+	});
+}
+
+async function initPio() {
+	if (disposed || mobileHidden || pioInitialized) return;
+	try {
+		assetsPromise ||= loadScript("/pio/static/l2d.js", "pio-l2d-script", () => typeof loadlive2d === "function")
+			.then(() => loadScript("/pio/static/pio.js", "pio-main-script", () => typeof Paul_Pio === "function"));
+		await assetsPromise;
+		if (disposed || mobileHidden || pioInitialized || !pioContainer || !pioCanvas) return;
+		new Paul_Pio(pioOptions);
+		pioInitialized = true;
+	} catch (error) {
+		assetsPromise = null;
+		console.error("Pio initialization failed:", error);
 	}
 }
 
-// 样式已通过 Layout.astro 静态引入，无需动态加载函数
-
-// 加载必要的脚本
-function loadPioAssets() {
-	if (typeof window === "undefined") return;
-
-	// 样式已通过 Layout.astro 静态引入
-
-	// 加载JS脚本
-	const loadScript = (src, id) => {
-		return new Promise((resolve, reject) => {
-			if (document.querySelector(`#${id}`)) {
-				resolve();
-				return;
-			}
-			const script = document.createElement("script");
-			script.id = id;
-			script.src = src;
-			script.onload = resolve;
-			script.onerror = reject;
-			document.head.appendChild(script);
-		});
-	};
-
-	// 按顺序加载脚本
-	loadScript("/pio/static/l2d.js", "pio-l2d-script")
-		.then(() => loadScript("/pio/static/pio.js", "pio-main-script"))
-		.then(() => {
-			// 脚本加载完成后初始化
-			setTimeout(initPio, 100);
-		})
-		.catch((error) => {
-			console.error("Failed to load Pio scripts:", error);
-		});
+function updateVisibility() {
+	mobileHidden = Boolean(pioConfig.hiddenOnMobile && mobileQuery.matches);
+	if (!mobileHidden) void initPio();
 }
-
-// 样式已通过 Layout.astro 静态引入，无需页面切换监听
 
 onMount(() => {
 	if (!pioConfig.enable) return;
-
-	// 如果配置了手机端隐藏，且当前屏幕宽度小于 1280px (平板/手机)，则直接终止，不加载脚本
-    if (pioConfig.hiddenOnMobile && window.matchMedia("(max-width: 1280px)").matches) {
-        return;
-    }
-
-	// 加载资源并初始化
-	loadPioAssets();
+	// 只在手机断点隐藏，较窄的桌面窗口仍然初始化看板娘。
+	mobileQuery = window.matchMedia("(max-width: 768px)");
+	mobileQuery.addEventListener("change", updateVisibility);
+	updateVisibility();
 });
 
 onDestroy(() => {
-	// Svelte 组件销毁时不需要清理 Pio 实例
-	// 因为我们希望它在页面切换时保持状态
-	console.log("Pio Svelte component destroyed (keeping instance alive)");
+	disposed = true;
+	mobileQuery?.removeEventListener("change", updateVisibility);
 });
 </script>
 
 {#if pioConfig.enable}
-  <div class={`pio-container ${pioConfig.position || 'right'}`} bind:this={pioContainer}>
+  <div class={`pio-container ${pioConfig.position || 'right'}`} class:mobile-hidden={mobileHidden} bind:this={pioContainer}>
     <div class="pio-action"></div>
-    <canvas 
-      id="pio" 
+    <canvas
+      id="pio"
       bind:this={pioCanvas}
-      width={pioConfig.width || 280} 
+      width={pioConfig.width || 280}
       height={pioConfig.height || 250}
     ></canvas>
   </div>
 {/if}
 
 <style>
-  /* Pio 相关样式将通过外部CSS文件加载 */
+  .mobile-hidden {
+    display: none;
+  }
 </style>

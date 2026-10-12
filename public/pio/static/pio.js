@@ -35,10 +35,7 @@ var Paul_Pio = function (prop) {
 		},
 		// 是否为移动设备
 		isMobile: () => {
-			let ua = window.navigator.userAgent.toLowerCase();
-			ua = ua.indexOf("mobile") || ua.indexOf("android") || ua.indexOf("ios");
-
-			return window.innerWidth < 500 || ua !== -1;
+			return window.matchMedia("(max-width: 768px)").matches;
 		},
 	};
 

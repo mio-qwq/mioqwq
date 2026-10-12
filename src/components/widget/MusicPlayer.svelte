@@ -50,8 +50,8 @@ let showError = false;
 
 // 当前歌曲信息
 let currentSong = {
-	title: "Sample Song",
-	artist: "Sample Artist",
+	title: i18n(Key.musicPlayerLoading),
+	artist: "",
 	cover: "/favicon/favicon.ico",
 	url: "",
 	duration: 0,
@@ -212,6 +212,7 @@ function playSong(index: number, autoPlay = true) {
 }
 
 function getAssetPath(path: string): string {
+	if (!path) return "";
 	if (path.startsWith("http://") || path.startsWith("https://")) return path;
 	if (path.startsWith("/")) return path;
 	return `/${path}`;
@@ -411,7 +412,7 @@ onDestroy(() => {
 
 <audio
 	bind:this={audio}
-	src={getAssetPath(currentSong.url)}
+	src={currentSong.url ? getAssetPath(currentSong.url) : undefined}
 	bind:volume
 	bind:muted={isMuted}
 	on:play={() => isPlaying = true}

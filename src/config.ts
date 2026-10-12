@@ -440,7 +440,7 @@ export const announcementConfig: AnnouncementConfig = {
 
 export const musicPlayerConfig: MusicPlayerConfig = {
 	enable: true, // 启用音乐播放器功能
-	mode: "meting", // 音乐播放器模式，可选 "local" 或 "meting"
+	mode: "local", // 音乐播放器模式，可选 "local" 或 "meting"
 	meting_api:
 		"https://www.bilibili.uno/api?server=:server&type=:type&id=:id&auth=:auth&r=:r", // Meting API 地址
 	id: "14164869977", // 歌单ID
@@ -515,16 +515,6 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			},
 		},
 		{
-			// 组件类型：站点统计组件
-			type: "site-stats",
-			// 组件位置
-			position: "top",
-			// CSS 类名
-			class: "onload-animation",
-			// 动画延迟时间
-			animationDelay: 200,
-		},
-		{
 			// 组件类型：日历组件(移动端不显示)
 			type: "calendar",
 			// 组件位置
@@ -539,7 +529,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 	// 侧栏组件布局配置
 	components: {
 		left: ["profile", "announcement", "categories", "tags"],
-		right: ["site-stats", "calendar"],
+		right: ["calendar"],
 		drawer: ["profile", "announcement"],
 	},
 
