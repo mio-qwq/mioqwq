@@ -621,7 +621,8 @@ export const widgetConfigs = {
 } as const;
 
 export const umamiConfig = {
-	enabled: true, // 是否显示Umami统计
+	enabled: true, // 是否启用Umami分析
+	showStats: false, // 不在个人资料和文章中显示访问统计
 	apiKey: import.meta.env.UMAMI_API_KEY || "api_LT0PltvLK2sIKHzAVrUs6moicsP58ooD", // API密钥优先从环境变量读取，否则使用配置文件中的值
 	baseUrl: "https://api.umami.is", // Umami Cloud API地址
 	scripts: `

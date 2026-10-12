@@ -7,7 +7,7 @@ import { formatDateToYYYYMMDD } from "../utils/date-utils";
 import { getCategoryUrl, getTagUrl } from "../utils/url-utils";
 
 // 解析 umami
-const umamiEnabled = umamiConfig.enabled || false;
+const umamiEnabled = umamiConfig.enabled && umamiConfig.showStats;
 const umamiWebsiteId =
 	umamiConfig.scripts.match(/data-website-id="([^"]+)"/)?.[1] || "";
 const umamiApiKey = umamiConfig.apiKey || "";
