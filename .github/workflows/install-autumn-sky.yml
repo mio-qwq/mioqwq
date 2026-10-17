@@ -1,0 +1,104 @@
+name: Install Autumn Sky blog music
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/install-autumn-sky.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out blog
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Assemble and verify the original MP3
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import re
+
+          parts = sorted(Path('.github/music-transfer').glob('part-*.bin'))
+          if len(parts) != 12:
+              raise RuntimeError(f'Expected 12 MP3 chunks, found {len(parts)}')
+          combined = b''.join(p.read_bytes() for p in parts)
+          expected_mp3 = 'a7d1bcaacd0f026da9061e7c5f885e53c46fbed19e77e620c0d187813b6949c5'
+          mp3_sha = hashlib.sha256(combined).hexdigest()
+          if mp3_sha != expected_mp3:
+              raise RuntimeError(f'MP3 checksum mismatch: {mp3_sha}')
+
+          cover = Path('public/assets/music/cover/autumn-sky.jpg')
+          cover_sha = hashlib.sha256(cover.read_bytes()).hexdigest()
+          expected_cover = 'e06c474e0da9b4a3d08fca044bca14053af28f770d5ff2c7c847a4cfeeb248c0'
+          if cover_sha != expected_cover:
+              raise RuntimeError(f'Cover checksum mismatch: {cover_sha}')
+
+          music_dir = Path('public/assets/music/url')
+          music_dir.mkdir(parents=True, exist_ok=True)
+          track = music_dir / 'autumn-sky.mp3'
+          if track.exists():
+              raise RuntimeError(f'Unexpected existing destination: {track}')
+          track.write_bytes(combined)
+
+          component = Path('src/components/widget/MusicPlayer.svelte')
+          content = component.read_bytes().decode('utf-8')
+          regex = re.compile(r'(?s)const localPlaylist = \[.*?\r?\n\];')
+          match = regex.search(content)
+          if not match:
+              raise RuntimeError('Could not find localPlaylist')
+          old_playlist = match.group(0)
+          for name in ('hitori.mp3', 'xryx.mp3', 'cl.mp3'):
+              if name not in old_playlist:
+                  raise RuntimeError(f'Playlist changed, missing {name}')
+          newline = '\r\n' if '\r\n' in content else '\n'
+          new_playlist = newline.join([
+              'const localPlaylist = [',
+              '\t{',
+              '\t\tid: 1,',
+              '\t\ttitle: "秋姉妹のなく頃に in the autumn sky",',
+              '\t\tartist: "ばんばんしー",',
+              '\t\tcover: "assets/music/cover/autumn-sky.jpg",',
+              '\t\turl: "assets/music/url/autumn-sky.mp3",',
+              '\t\tduration: 263,',
+              '\t},',
+              '];',
+          ])
+          component.write_bytes((content[:match.start()] + new_playlist + content[match.end():]).encode('utf-8'))
+
+          old_assets = [
+              'public/assets/music/cover/cl.jpg',
+              'public/assets/music/cover/hitori.jpg',
+              'public/assets/music/cover/xryx.jpg',
+              'public/assets/music/url/cl.mp3',
+              'public/assets/music/url/hitori.mp3',
+              'public/assets/music/url/xryx.mp3',
+          ]
+          for asset in old_assets:
+              item = Path(asset)
+              if not item.is_file():
+                  raise RuntimeError(f'Old music asset missing unexpectedly: {asset}')
+              item.unlink()
+          for part in parts:
+              part.unlink()
+          Path('.github/music-transfer').rmdir()
+          print('MP3 SHA-256:', mp3_sha)
+          print('Cover SHA-256:', cover_sha)
+          print('Replaced 3-song local playlist with exactly 1 song')
+          PY
+
+      - name: Commit the verified single-song playlist
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- src/components/widget/MusicPlayer.svelte public/assets/music .github/music-transfer
+          git diff --cached --check
+          git commit -m 'music: replace blog playlist with Autumn Sky'
+          git push origin HEAD:main
