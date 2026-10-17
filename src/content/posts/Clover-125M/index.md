@@ -1,6 +1,6 @@
 ---
 title: "从零训练了一个125M的语言模型：Clover 🍀"
-description: "Trained a little 125M English model from scratch. It still makes up all kinds of nonsense, but it can chat now (and even has its own website)."
+description: "Trained a 125M language model from scratch. It can actually chat now!"
 published: 2026-10-17
 date: 2026-10-17
 pubDate: 2026-10-17
@@ -18,7 +18,7 @@ permalink: "Clover-125M"
 
 名字叫 **Clover-125M**。124,720,896 个参数，纯英文，从随机权重开始训练，先预训练，再跑了三轮全参数 SFT。
 
-而且还给它写了个聊天网页（现在已经真的部署上去了！
+而且还给它写了个聊天网页,现在已经部署上去了
 
 **[在线体验 Clover](https://ai.mio.blue/)** ｜ [Hugging Face](https://huggingface.co/mioqwq/Clover-125M) ｜ [GitHub](https://github.com/mio-qwq/clover-125m)
 
@@ -42,7 +42,7 @@ permalink: "Clover-125M"
 
 ## 看着底模一点点开始说人话
 
-### 10%：啊？已经会说一点了？
+### 10%：啊？已经会说一点了
 
 底模才训练到 **10%** 时，试了一下英文续写。
 
@@ -78,7 +78,7 @@ permalink: "Clover-125M"
 
 (光看英文感觉还挺像回事)
 
-### 底模训练完了
+### 底模训练完成
 
 等底模完全训练结束，再拿英文故事开头去试，已经能一段一段地往后写了。
 
@@ -136,9 +136,9 @@ mio当时仿佛看到核弹爆炸，直接瘫坐在椅子上了(
 
 第三轮阅读测试的 Loss 为 **0.439808**，PPL 为 **1.552409**。不过这只是特定测试集上的 Token 预测指标，并不意味着聊天回答有多高的正确率。
 
-现在感觉是不是已经有点 GPT-1 的水平了（？
+现在感觉是不是已经有点 GPT-1 的水平了(?
 
-不过这个纯粹是主观感觉，还没有做过和 GPT-1 的严谨对照评测。
+不过这个其实不确定(
 
 具体到底怎么样，直接去 [ai.mio.blue](https://ai.mio.blue/) 聊几句就知道了（建议用英文）。
 
@@ -156,7 +156,7 @@ Clover 的 FP32 GGUF 文件本身就有大概 477 MiB。还要留空间给推理
 
 ## 最后
 
-回过头看这些截图还挺有意思的。
+回过头看这些还挺有意思的。
 
 10% 的时候刚刚能说一点人话，20% 的时候 NASDAQ100 开始骑车，第一次 SFT 之后能回答问题，第二轮甚至知道自己是谁了。
 
