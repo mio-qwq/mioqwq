@@ -4,7 +4,7 @@ description: "26亿Token预训练、三轮SFT，还有一个能直接聊天的�
 published: 2026-10-17
 date: 2026-10-17
 pubDate: 2026-10-17
-draft: true
+draft: false
 tags: ["AI", "LLM", "Clover"]
 category: AI
 pinned: true
