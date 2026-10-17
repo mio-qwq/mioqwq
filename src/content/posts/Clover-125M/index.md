@@ -1,6 +1,6 @@
 ---
 title: "从零训练了一个125M的语言模型：Clover 🍀"
-description: "26亿Token预训练、三轮SFT，还有一个能直接聊天的小网页。"
+description: "Trained a little 125M English model from scratch. It still makes up all kinds of nonsense, but it can chat now (and even has its own website)."
 published: 2026-10-17
 date: 2026-10-17
 pubDate: 2026-10-17
