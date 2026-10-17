@@ -22,7 +22,7 @@ permalink: "Clover-125M"
 
 **[在线体验 Clover](https://ai.mio.blue/)** ｜ [Hugging Face](https://huggingface.co/mioqwq/Clover-125M) ｜ [GitHub](https://github.com/mio-qwq/clover-125m)
 
-![Clover 的在线聊天页面](<图片(20261016-161603).png>)
+![Clover 的在线聊天页面](<clover-web-ui.png>)
 
 ~~只有125M，先不要对它的智商有太高期待🌚~~
 
@@ -48,7 +48,7 @@ permalink: "Clover-125M"
 
 当时真的很震惊，因为完全没想到才训练这么一点，它居然已经能说出一点点人话了。虽然逻辑还是一塌糊涂，但是英文句子已经出来了……
 
-![底模训练到10%时的英文续写](底模10%.jpg)
+![底模训练到10%时的英文续写](base-10.jpg)
 
 当时就觉得，啊？？？这才 10% 啊？？？
 
@@ -62,7 +62,7 @@ permalink: "Clover-125M"
 
 后面甚至开始扯自行车和价格。
 
-![底模训练到20%时，NASDAQ100的离谱续写](底模20%.jpg)
+![底模训练到20%时，NASDAQ100的离谱续写](base-20.jpg)
 
 **NASDAQ100 just hits the road**，纳斯达克怎么就骑自行车上路了哈哈哈哈哈。
 
@@ -74,7 +74,7 @@ permalink: "Clover-125M"
 
 但是它把 Carnegie Mellon University 和加州大学圣地亚哥分校、奥克兰等地方扯到了一起，年份和校史也在乱编。
 
-![底模训练到30%时编造的大学介绍](底模30%.jpg)
+![底模训练到30%时编造的大学介绍](base-30.jpg)
 
 光看英文感觉还挺像回事，一看内容直接绷不住……
 
@@ -82,7 +82,7 @@ permalink: "Clover-125M"
 
 等底模完全训练结束，再拿英文故事开头去试，已经能一段一段地往后写了。
 
-![预训练结束后的英文故事续写](底模完成.jpg)
+![预训练结束后的英文故事续写](base-final.jpg)
 
 还有人物对话，还会接着前面的剧情写。虽然不保证每一句都有意义，但这时候真的已经能说非常完整的英文了。
 
@@ -98,13 +98,13 @@ permalink: "Clover-125M"
 
 试着问它 `What is Bitcoin?`，能看出它开始有“回答问题”的意识了。
 
-![第一轮SFT后回答Bitcoin](sft第一轮2.jpg)
+![第一轮SFT后回答Bitcoin](sft1-bitcoin.jpg)
 
 结果它连 Bitcoin 的价格都开始编……而且语气特别认真。
 
 最经典的还是 Carnegie Mellon University。
 
-![第一轮SFT后介绍卡内基梅隆大学](sft第一轮1.jpg)
+![第一轮SFT后介绍卡内基梅隆大学](sft1-cmu.jpg)
 
 **纽约卡内基梅隆大学**，甚至还在曼哈顿百老汇附近……🌚
 
@@ -116,7 +116,7 @@ permalink: "Clover-125M"
 
 然后再去看生成结果。
 
-![第二轮SFT后的多组真实回答](第二轮sft.jpg)
+![第二轮SFT后的多组真实回答](sft2-dialogue.jpg)
 
 问它 `Are you a human or an AI? What should I call you?`，它居然回答：
 
