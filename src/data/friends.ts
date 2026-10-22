@@ -30,10 +30,10 @@ export const friendsData: FriendItem[] = [
 	},
 	{
 		id: 3,
-		title: "kine",
-		imgurl: "https://data.mio.blue/img/kine.jpg",
-		desc: "“mio真可爱，想rua”",
-		siteurl: "http://www.kinehoo.top",
+		title: "k1ne",
+		imgurl: "https://k1ne7.github.io/images/avatar.jpg",
+		desc: "“追寻心中的旗帜”",
+		siteurl: "https://k1ne7.github.io/",
 		tags: ["web","Re"],
 	},
 	{
